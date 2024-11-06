@@ -60,22 +60,53 @@ function App() {
 function Header() {
   return (
     <header className="header">
-      <h1>William's Good Pizza</h1>
+      <h1>Lorenzo's Slice</h1>
     </header>
   );
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+  const numPizzas = pizzas.length;
+
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
-      <Pizza />
+
+      {numPizzas > 0 ? (
+        <>
+          <p> Authentic Italian pizza made with love and passion.</p>
+          <ul className="pizzas">
+            {pizzaData.map((pizza) => (
+              <Pizza pizzaObj={pizza} key={pizza.name} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>
+          We're sorry, we're currently out of pizza. Please check back later.
+        </p>
+      )}
     </main>
+  );
+}
+
+function Pizza({ pizzaObj }) {
+  // if (pizzaObj.soldOut) {
+  //   return null;
+  // }
+  return (
+    <li className={`pizza ${pizzaObj.soldOut ? "sold-out" : ""}`}>
+      <div>
+        <img src={pizzaObj.photoName} alt={pizzaObj.name} />
+      </div>
+      <div>
+        <h3>{pizzaObj.name}</h3>
+        <p>{pizzaObj.ingredients}</p>
+        {/* <p>${pizzaObj.price}</p> */}
+        <span>${pizzaObj.soldOut ? " SOLD OUT" : pizzaObj.price}</span>
+      </div>
+    </li>
   );
 }
 
@@ -85,20 +116,34 @@ function Footer() {
   const closeHour = 22;
 
   const isOpen = hour >= openHour && hour <= closeHour;
-  console.log(isOpen);
 
   return (
-    <footer className="footer">{new Date().toLocaleTimeString()} We're currently open!</footer>
+    <footer className="footer">
+      {isOpen ? (
+        <Order closeHour={closeHour} />
+      ) : (
+        <Closed openHour={openHour} closeHour={closeHour} />
+      )}
+    </footer>
   );
 }
 
-function Pizza() {
+function Order({ closeHour }) {
   return (
-    <div>
-      <img src="pizzas/spinaci.jpg" alt="Pizza Spinaci" />
-      <h3>Pizza</h3>
-      <p>Ingredients: Tomato, mozarella, spinach, and ricotta cheese</p>
+    <div className="order">
+      <p>
+        We're currently open until {closeHour}:00 Come visit us or order online.
+      </p>
+      <button className="btn">ORDER</button>
     </div>
+  );
+}
+
+function Closed({ openHour, closeHour }) {
+  return (
+    <p>
+      We'll be happy to welcome you between {openHour}:00 and {closeHour}:00
+    </p>
   );
 }
 
